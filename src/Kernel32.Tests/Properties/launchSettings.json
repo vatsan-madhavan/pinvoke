@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Kernel32.Tests": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

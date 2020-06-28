@@ -954,36 +954,27 @@ public partial class Kernel32Facts
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
     /// </summary>
-    // [Fact]
-    private unsafe void CreateThread_Test()
+    [Fact]
+    public void CreateThread_Test()
     {
-        var secAttrs = new Kernel32.SECURITY_ATTRIBUTES
-        {
-            bInheritHandle = 1,
-            lpSecurityDescriptor = IntPtr.Zero,
-            nLength = Marshal.SizeOf<Kernel32.SECURITY_ATTRIBUTES>()
-        };
-
-        var dwThreadId = Kernel32.GetCurrentThreadId();
-
         var result = false;
         var gcHandle = GCHandle.Alloc(result);
         try
         {
-            var dwNewThreadId = 0;
             using var hThread =
-                    Kernel32.CreateThread(
-                        &secAttrs,
-                        SIZE_T.Zero,
-                        new Kernel32.THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
-                        GCHandle.ToIntPtr(gcHandle),
-                        Kernel32.CreateProcessFlags.None,
-                        &dwNewThreadId);
+                Kernel32.CreateThread(
+                    SECURITY_ATTRIBUTES.Create(),
+                    SIZE_T.Zero,
+                    new THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
+                    GCHandle.ToIntPtr(gcHandle),
+                    CreateProcessFlags.None,
+                    out var dwNewThreadId);
             Kernel32.WaitForSingleObject(hThread, -1);
 
             result = (bool)gcHandle.Target;
             Assert.True(result);
-            Assert.NotEqual(dwThreadId, dwNewThreadId);
+
+            Assert.NotEqual(Kernel32.GetCurrentThreadId(), dwNewThreadId);
         }
         finally
         {
