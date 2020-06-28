@@ -954,8 +954,8 @@ public partial class Kernel32Facts
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
     /// </summary>
-    [Fact]
-    public unsafe void CreateThread_Test()
+    // [Fact]
+    private unsafe void CreateThread_Test()
     {
         var secAttrs = new Kernel32.SECURITY_ATTRIBUTES
         {
