@@ -23,7 +23,7 @@ steps:
     --name 'PInvoke'
     --descriptionUrl 'https://github.com/dotnet/pinvoke'
   displayName: Code sign
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), false)
 
 - task: PowerShell@2
   inputs:
