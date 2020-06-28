@@ -947,9 +947,11 @@ public partial class Kernel32Facts
     /// <summary>
     /// Basic validation for <see cref="Kernel32.CreateThread(SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE, IntPtr, CreateProcessFlags, int*)"/>
     ///
-    /// Creates a thread by supplying <see cref="CreateThread_Test_ThreadMain(IntPtr)"/> as its ThreadProc/<see cref="Kernel32.THREAD_START_ROUTINE"/>.
-    /// The ThreadProc updates a bool value (supplied by the thread that created it) from false -> true. This change
-    /// is observed by the calling thread as proof of successful thread-creation.
+    /// Creates a suspended thread. No ThreadProc (<see cref="Kernel32.THREAD_START_ROUTINE"/>) is supplied; this is
+    /// ordinarily illegal - but since this thread is never run this is ok.
+    ///
+    /// Searches the <see cref="Process.Threads"/> collection of the current process to check whether a thread was indeed
+    /// created to validate.
     ///
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
@@ -957,29 +959,26 @@ public partial class Kernel32Facts
     [Fact]
     public void CreateThread_Test()
     {
-        var result = false;
-        var gcHandle = GCHandle.Alloc(result);
-        try
-        {
-            using var hThread =
-                Kernel32.CreateThread(
-                    SECURITY_ATTRIBUTES.Create(),
-                    SIZE_T.Zero,
-                    new THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
-                    GCHandle.ToIntPtr(gcHandle),
-                    CreateProcessFlags.None,
-                    out var dwNewThreadId);
-            Kernel32.WaitForSingleObject(hThread, -1);
+        using var hThread =
+            Kernel32.CreateThread(
+                Kernel32.SECURITY_ATTRIBUTES.Create(),
+                SIZE_T.Zero,
+                null,   // Illegal to pass a null ThreadStart fn., but ok since we will never 'run' this thread
+                IntPtr.Zero,
+                Kernel32.CreateProcessFlags.CREATE_SUSPENDED,
+                out var dwNewThreadId);
+        Assert.NotEqual(Kernel32.GetCurrentThreadId(), dwNewThreadId);
 
-            result = (bool)gcHandle.Target;
-            Assert.True(result);
+        // Search the process for threads matching ID == dwThreadId
+        var thread = (from ProcessThread entry
+                      in Process.GetCurrentProcess().Threads
+                      where entry.Id == dwNewThreadId
+                      select entry)
+                      .FirstOrDefault();
+        Assert.NotNull(thread);
 
-            Assert.NotEqual(Kernel32.GetCurrentThreadId(), dwNewThreadId);
-        }
-        finally
-        {
-            gcHandle.Free();
-        }
+        Kernel32.TerminateThread(hThread.DangerousGetHandle(), 0);
+        Kernel32.WaitForSingleObject(hThread, -1);
     }
 
     /// <summary>
@@ -987,9 +986,11 @@ public partial class Kernel32Facts
     /// Note that this test DOES NOT create a true REMOTE thread in a foreign process; it just leverages this function to create a thread in the current (i.e, the test) procrss.
     /// Nevertheless, this approach provides modest confidence that the P/Invoke definition is well-formed.
     ///
-    /// Creates a thread by supplying <see cref="CreateThread_Test_ThreadMain(IntPtr)"/> as its ThreadProc/<see cref="Kernel32.THREAD_START_ROUTINE"/>.
-    /// The ThreadProc updates a bool value (supplied by the thread that created it) from false -> true. This change
-    /// is observed by the calling thread as proof of successful thread-creation.
+    /// Creates a suspended thread. No ThreadProc (<see cref="Kernel32.THREAD_START_ROUTINE"/>) is supplied; this is
+    /// ordinarily illegal - but since this thread is never run this is ok.
+    ///
+    /// Searches the <see cref="Process.Threads"/> collection of the current process to check whether a thread was indeed
+    /// created to validate.
     ///
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
@@ -998,31 +999,26 @@ public partial class Kernel32Facts
     public unsafe void CreateRemoteThread_PseudoTest()
     {
         using var hProcess = Kernel32.GetCurrentProcess();
+        using var hThread =
+            Kernel32.CreateRemoteThread(
+                hProcess.DangerousGetHandle(),
+                Kernel32.SECURITY_ATTRIBUTES.Create(),
+                SIZE_T.Zero,
+                null,   // Illegal to pass a null ThreadStart fn., but ok since we will never 'run' this thread
+                IntPtr.Zero,
+                Kernel32.CreateProcessFlags.CREATE_SUSPENDED,
+                out var dwNewThreadId);
 
-        var result = false;
-        var gcHandle = GCHandle.Alloc(result);
-        try
-        {
-            using var hThread =
-                Kernel32.CreateRemoteThread(
-                    hProcess.DangerousGetHandle(),
-                    SECURITY_ATTRIBUTES.Create(),
-                    SIZE_T.Zero,
-                    new THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
-                    GCHandle.ToIntPtr(gcHandle),
-                    CreateProcessFlags.None,
-                    out var dwNewThreadId);
-            Kernel32.WaitForSingleObject(hThread, -1);
+        // Search the process for threads matching ID == dwThreadId
+        var thread = (from ProcessThread entry
+                      in Process.GetCurrentProcess().Threads
+                      where entry.Id == dwNewThreadId
+                      select entry)
+                      .FirstOrDefault();
+        Assert.NotNull(thread);
 
-            result = (bool)gcHandle.Target;
-            Assert.True(result);
-
-            Assert.NotEqual(Kernel32.GetCurrentThreadId(), dwNewThreadId);
-        }
-        finally
-        {
-            gcHandle.Free();
-        }
+        Kernel32.TerminateThread(hThread.DangerousGetHandle(), 0);
+        Kernel32.WaitForSingleObject(hThread, -1);
     }
 
     /// <summary>
@@ -1030,9 +1026,11 @@ public partial class Kernel32Facts
     /// Note that this test DOES NOT create a true REMOTE thread in a foreign process; it just leverages this function to create a thread in the current (i.e, the test) procrss.
     /// Nevertheless, this approach provides modest confidence that the P/Invoke definition is well-formed.
     ///
-    /// Creates a thread by supplying <see cref="CreateThread_Test_ThreadMain(IntPtr)"/> as its ThreadProc/<see cref="Kernel32.THREAD_START_ROUTINE"/>.
-    /// The ThreadProc updates a bool value (supplied by the thread that created it) from false -> true. This change
-    /// is observed by the calling thread as proof of successful thread-creation.
+    /// Creates a suspended thread. No ThreadProc (<see cref="Kernel32.THREAD_START_ROUTINE"/>) is supplied; this is
+    /// ordinarily illegal - but since this thread is never run this is ok.
+    ///
+    /// Searches the <see cref="Process.Threads"/> collection of the current process to check whether a thread was indeed
+    /// created to validate.
     ///
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
@@ -1041,61 +1039,27 @@ public partial class Kernel32Facts
     public unsafe void CreateRemoteThreadEx_PseudoTest()
     {
         using var hProcess = Kernel32.GetCurrentProcess();
+        using var hThread =
+                Kernel32.CreateRemoteThreadEx(
+                    hProcess.DangerousGetHandle(),
+                    Kernel32.SECURITY_ATTRIBUTES.Create(),
+                    SIZE_T.Zero,
+                    null,   // Illegal to pass a null ThreadStart fn., but ok since we will never 'run' this thread
+                    IntPtr.Zero,
+                    Kernel32.CreateProcessFlags.CREATE_SUSPENDED,
+                    null,
+                    out var dwNewThreadId);
 
-        var result = false;
-        var gcHandle = GCHandle.Alloc(result);
-        try
-        {
-            using var hThread =
-                    Kernel32.CreateRemoteThreadEx(
-                        hProcess.DangerousGetHandle(),
-                        SECURITY_ATTRIBUTES.Create(),
-                        SIZE_T.Zero,
-                        new Kernel32.THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
-                        GCHandle.ToIntPtr(gcHandle),
-                        Kernel32.CreateProcessFlags.None,
-                        null,
-                        out var dwNewThreadId);
-            Kernel32.WaitForSingleObject(hThread, -1);
+        // Search the process for threads matching ID == dwThreadId
+        var thread = (from ProcessThread entry
+                      in Process.GetCurrentProcess().Threads
+                      where entry.Id == dwNewThreadId
+                      select entry)
+                      .FirstOrDefault();
+        Assert.NotNull(thread);
 
-            result = (bool)gcHandle.Target;
-            Assert.True(result);
-            Assert.NotEqual(Kernel32.GetCurrentThreadId(), dwNewThreadId);
-        }
-        finally
-        {
-            gcHandle.Free();
-        }
-    }
-
-    /// <summary>
-    /// Helper for <see cref="CreateThread_Test"/>, <see cref="CreateRemoteThread_PseudoTest"/>  and
-    /// <see cref="CreateRemoteThreadEx_PseudoTest"/> tests.
-    /// </summary>
-    /// <param name="data">
-    /// Data passed by the test. This is a pinned <see cref="GCHandle"/> to a <see cref="bool"/>
-    /// which will be updated to <code>true</code> in this method.
-    /// </param>
-    /// <returns>
-    /// Returns 1 on successfully updating the <see cref="GCHandle"/> associated with
-    /// <paramref name="data"/>, otherwise returns 0
-    /// </returns>
-    /// <remarks>See <see cref=" Kernel32.THREAD_START_ROUTINE"/> for general documentation</remarks>
-#pragma warning disable SA1204
-    private static int CreateThread_Test_ThreadMain(IntPtr data)
-#pragma warning restore SA1204
-    {
-        var gcHandle = GCHandle.FromIntPtr(data);
-        try
-        {
-            gcHandle.Target = true;
-        }
-        catch (Exception e) when (e is InvalidCastException || e is InvalidOperationException)
-        {
-            return 0;
-        }
-
-        return 1;
+        Kernel32.TerminateThread(hThread.DangerousGetHandle(), 0);
+        Kernel32.WaitForSingleObject(hThread, -1);
     }
 
     private ArraySegment<byte> GetRandomSegment(int size)
