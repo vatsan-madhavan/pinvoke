@@ -1003,8 +1003,8 @@ public partial class Kernel32Facts
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
     /// </summary>
-    [Fact]
-    public unsafe void CreateRemoteThread_PseudoTest()
+    // [Fact]
+    private unsafe void CreateRemoteThread_PseudoTest()
     {
         var secAttrs = new Kernel32.SECURITY_ATTRIBUTES
         {
@@ -1054,8 +1054,8 @@ public partial class Kernel32Facts
     /// Also validates that the (native) Thread-ID for the newly created Thread is different than the (native) Thread-ID
     /// of that of the calling thread.
     /// </summary>
-    [Fact]
-    public unsafe void CreateRemoteThreadEx_PseudoTest()
+    // [Fact]
+    private unsafe void CreateRemoteThreadEx_PseudoTest()
     {
         var secAttrs = new Kernel32.SECURITY_ATTRIBUTES
         {
@@ -1107,7 +1107,9 @@ public partial class Kernel32Facts
     /// <paramref name="data"/>, otherwise returns 0
     /// </returns>
     /// <remarks>See <see cref=" Kernel32.THREAD_START_ROUTINE"/> for general documentation</remarks>
+#pragma warning disable SA1204
     private static int CreateThread_Test_ThreadMain(IntPtr data)
+#pragma warning restore SA1204
     {
         var gcHandle = GCHandle.FromIntPtr(data);
         try
