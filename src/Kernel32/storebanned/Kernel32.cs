@@ -3152,7 +3152,7 @@ namespace PInvoke
             THREAD_START_ROUTINE lpStartAddress,
             IntPtr lpParameter,
             CreateProcessFlags dwCreationFlags,
-            int* lpThreadId);
+            [Friendly(FriendlyFlags.Out)] int* lpThreadId);
 
         /// <summary>
         /// Creates a thread that runs in the virtual address space of another process and optionally specifies extended attributes such as processor
@@ -3205,6 +3205,6 @@ namespace PInvoke
             IntPtr lpParameter,
             CreateProcessFlags dwCreationFlags,
             PROC_THREAD_ATTRIBUTE_LIST* lpAttributeList,
-            int* lpThreadId);
+            [Friendly(FriendlyFlags.Out)] int* lpThreadId);
     }
 }
