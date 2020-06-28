@@ -43,7 +43,7 @@ stages:
           - task: GitHubRelease@1
             displayName: GitHub release (create)
             inputs:
-              gitHubConnection: GitHub AArnott
+              gitHubConnection: GitHub vatsan-madhavan
               repositoryName: $(Build.Repository.Name)
               tagSource: userSpecifiedTag
               tag: v$(Build.BuildNumber)
