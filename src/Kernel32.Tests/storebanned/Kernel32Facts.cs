@@ -963,7 +963,7 @@ public partial class Kernel32Facts
             Kernel32.CreateThread(
                 Kernel32.SECURITY_ATTRIBUTES.Create(),
                 SIZE_T.Zero,
-                null,   // Illegal to pass a null ThreadStart fn., but ok since we will never 'run' this thread
+                new THREAD_START_ROUTINE(CreateThread_Test_ThreadMain),
                 IntPtr.Zero,
                 Kernel32.CreateProcessFlags.CREATE_SUSPENDED,
                 out var dwNewThreadId);
@@ -977,8 +977,13 @@ public partial class Kernel32Facts
                       .FirstOrDefault();
         Assert.NotNull(thread);
 
-        Kernel32.TerminateThread(hThread.DangerousGetHandle(), 0);
+        var dwSuspendCount = Kernel32.ResumeThread(new SafeObjectHandle(hThread.DangerousGetHandle(), ownsHandle: false));
+        Assert.Equal(1, dwSuspendCount);
+
         Kernel32.WaitForSingleObject(hThread, -1);
+
+        Kernel32.GetExitCodeThread(hThread.DangerousGetHandle(), out var dwExitCode);
+        Assert.Equal(1, dwExitCode);
     }
 
     /// <summary>
@@ -1060,6 +1065,20 @@ public partial class Kernel32Facts
 
         Kernel32.TerminateThread(hThread.DangerousGetHandle(), 0);
         Kernel32.WaitForSingleObject(hThread, -1);
+    }
+
+    /// <summary>
+    /// Helper for <see cref="CreateThread_Test"/>
+    /// </summary>
+    /// <param name="data">
+    /// Data passed by the test. Unused.
+    /// </param>
+    /// <returns> Always returns 1</returns>
+    /// <remarks>See <see cref=" Kernel32.THREAD_START_ROUTINE"/> for general documentation</remarks>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoOptimization | System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static int CreateThread_Test_ThreadMain(IntPtr data)
+    {
+       return 1;
     }
 
     private ArraySegment<byte> GetRandomSegment(int size)
