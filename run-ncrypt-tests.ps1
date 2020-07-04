@@ -16,7 +16,7 @@ Param(
 $ProjectRoot = Split-Path -parent $PSCommandPath
 
 [System.Management.Automation.Job[]]$jobs = @()
-for ($i = 0; $i -lt 100; $i++) {
+for ($i = 0; $i -lt 200; $i++) {
     $j = Start-Job -ScriptBlock {
         param(
             [string]$ProjectRoot,
@@ -53,23 +53,26 @@ for ($i = 0; $i -lt 100; $i++) {
 
         $xunitArgs = @()
         $xunitArgs += $TestAssemblies
-        $xunitArgs += "-html","$BinTestsFolder\$LogFileName.html","-xml","$BinTestsFolder\$LogFileName.xml"
+
+        $xunitx86Args += "-html","$BinTestsFolder\$LogFileName.html","-xml","$BinTestsFolder\$LogFileName.x86.xml"
+        $xunitx64Args += "-html","$BinTestsFolder\$LogFileName.html","-xml","$BinTestsFolder\$LogFileName.x64.xml"
+
         $xunitArgs += "-notrait",'"skiponcloud=true"'
         if (!$NoParallelTests) {
             $xunitArgs += "-parallel","all"
         }
 
         Write-Host "Testing x86..." -ForegroundColor Yellow
-        Write-Host $xunitx86Runner $xunitArgs -ForegroundColor Yellow
-        & $xunitx86Runner $xunitArgs | Out-Host
+        Write-Host "$xunitx86Runner $xunitArgs $xunitx86Args" -ForegroundColor Yellow
+        & $xunitx86Runner $xunitArgs $xunitx86Args| Out-Host
         if ($LASTEXITCODE -ne 0) {
             Write-Error "x86 test run returned exit code $LASTEXITCODE"
             $testsFailed = $true
         }
 
         Write-Host "Testing x64..." -ForegroundColor Yellow
-        Write-Host $xunitx64Runner $xunitArgs -ForegroundColor Yellow
-        & $xunitx64Runner $xunitArgs | Out-Host
+        Write-Host "$xunitx64Runner $xunitArgs $xunitx64Args"-ForegroundColor Yellow
+        & $xunitx64Runner $xunitArgs $xunitx64Args| Out-Host
         if ($LASTEXITCODE -ne 0) {
             Write-Error "x64 test run returned exit code $LASTEXITCODE"
             $testsFailed = $true
