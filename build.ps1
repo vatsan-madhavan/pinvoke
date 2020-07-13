@@ -19,6 +19,8 @@
     Produces the LIBNAME.pinvokes.txt files along with the assemblies during the build.
 .Parameter NoParallelTests
     Do not execute tests in parallel.
+.Parameter BinaryLog
+	Generate MSBuild Binary Log (in addition to text logs)
 #>
 [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
 Param(
@@ -30,7 +32,9 @@ Param(
     [string]$Configuration = $env:BUILDCONFIGURATION,
     [switch]$WarnAsError = $true,
     [switch]$GeneratePInvokesTxt,
-    [switch]$NoParallelTests
+    [switch]$NoParallelTests,
+	[Alias('bl')]
+	[switch]$BinaryLog
 )
 
 if (!$Configuration) { $Configuration = 'debug' }
@@ -84,6 +88,9 @@ if (($Build -or $Rebuild) -and $PSCmdlet.ShouldProcess($SolutionFile, "Build")) 
     if ($GeneratePInvokesTxt) {
         $buildArgs += '/p:GeneratePInvokesTxt=true'
     }
+	if ($BinaryLog) {
+		$buildArgs += '/bl'
+	}
 
     Write-Output "Building..."
     & $MSBuildCommand.Path $buildArgs
