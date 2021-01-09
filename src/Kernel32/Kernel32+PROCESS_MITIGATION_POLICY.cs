@@ -9,7 +9,7 @@ namespace PInvoke
     public partial class Kernel32
     {
         /// <summary>
-        /// Represents the different process mitigation policies
+        /// Represents the different process mitigation policies.
         /// </summary>
         public enum PROCESS_MITIGATION_POLICY
         {

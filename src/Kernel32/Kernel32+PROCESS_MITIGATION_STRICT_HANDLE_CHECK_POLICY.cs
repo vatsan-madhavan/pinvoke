@@ -11,7 +11,7 @@ namespace PInvoke
     public partial class Kernel32
     {
         /// <summary>
-        /// Used to impose new behavior on handle references that are not valid
+        /// Used to impose new behavior on handle references that are not valid.
         /// </summary>
         /// <remarks>
         /// As a general rule, strict handle checking cannot be turned off once it is turned on.
@@ -34,7 +34,7 @@ namespace PInvoke
             public struct DUMMYUNION
             {
                 /// <summary>
-                /// This member is reserved for system use
+                /// This member is reserved for system use.
                 /// </summary>
                 [FieldOffset(0)]
                 public uint Flags;
@@ -48,7 +48,7 @@ namespace PInvoke
                 /// <summary>
                 /// RaiseExceptionOnInvalidHandleReference : 1
                 /// HandleExceptionsPermanentlyEnabled : 1
-                /// ReservedFlags : 30
+                /// ReservedFlags : 30.
                 /// </summary>
                 private uint bitvector;
 

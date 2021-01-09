@@ -34,13 +34,13 @@ namespace PInvoke
                 /// AllowThreadOptOut : 1
                 /// AllowRemoteDowngrade : 1
                 /// AuditProhibitDynamicCode : 1
-                /// ReservedFlags : 28
+                /// ReservedFlags : 28.
                 /// </summary>
                 private uint bitvector;
 
                 /// <summary>
                 /// Gets or sets a value indicating whether to prevent the process from generating dynamic code or modifying
-                /// existing executable code
+                /// existing executable code.
                 /// </summary>
                 public bool ProhibitDynamicCode
                 {
@@ -81,7 +81,7 @@ namespace PInvoke
                 /// <summary>
                 /// Gets or sets <see cref="ReservedFlags"/>
                 ///
-                /// Reserved for system use
+                /// Reserved for system use.
                 /// </summary>
                 public uint ReservedFlags
                 {

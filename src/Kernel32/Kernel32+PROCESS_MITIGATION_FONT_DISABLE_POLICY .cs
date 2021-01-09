@@ -11,26 +11,26 @@ namespace PInvoke
     public partial class Kernel32
     {
         /// <summary>
-        /// Contains process mitigation policy settings for the loading of non-system fonts
+        /// Contains process mitigation policy settings for the loading of non-system fonts.
         /// </summary>
         public struct PROCESS_MITIGATION_FONT_DISABLE_POLICY
         {
             /// <summary>
             /// Union containing <see cref="DUMMYUNION.Flags"/> and a bit-vector
-            /// <see cref="DUMMYUNION.DUMMYSTRUCTNAME"/>
+            /// <see cref="DUMMYUNION.DUMMYSTRUCTNAME"/>.
             /// </summary>
             public DUMMYUNION DUMMYUNIONNAME;
 
             /// <summary>
             /// Structure containing a bit-vector that's used in the union
-            /// <see cref="DUMMYUNION"/>
+            /// <see cref="DUMMYUNION"/>.
             /// </summary>
             public struct DUMMYSTRUCT
             {
                 /// <summary>
                 /// DisableNonSystemFonts : 1
                 /// AuditNonSystemFontLoading : 1
-                /// ReservedFlags : 30
+                /// ReservedFlags : 30.
                 /// </summary>
                 private uint bitvector;
 
@@ -64,7 +64,7 @@ namespace PInvoke
                 /// <summary>
                 /// Gets or sets <see cref="ReservedFlags"/>
                 ///
-                /// Reserved for system use
+                /// Reserved for system use.
                 /// </summary>
                 public uint ReservedFlags
                 {
@@ -74,20 +74,20 @@ namespace PInvoke
             }
 
             /// <summary>
-            /// Union type for <see cref="DUMMYUNIONNAME"/>
+            /// Union type for <see cref="DUMMYUNIONNAME"/>.
             /// </summary>
             [StructLayout(LayoutKind.Explicit)]
             public struct DUMMYUNION
             {
                 /// <summary>
-                /// Reserved for system use
+                /// Reserved for system use.
                 /// </summary>
                 [FieldOffset(0)]
                 public uint Flags;
 
                 /// <summary>
                 /// Structure containing a bit-vector that is used in the
-                /// union <see cref="DUMMYUNION"/>
+                /// union <see cref="DUMMYUNION"/>.
                 /// </summary>
                 [FieldOffset(0)]
                 public DUMMYSTRUCT DUMMYSTRUCTNAME;

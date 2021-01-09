@@ -22,7 +22,7 @@ namespace PInvoke
             public struct DUMMYUNION
             {
                 /// <summary>
-                /// This member is reserved for system use
+                /// This member is reserved for system use.
                 /// </summary>
                 [FieldOffset(0)]
                 public uint Flags;
@@ -38,7 +38,7 @@ namespace PInvoke
                 /// EnableForceRelocateImages : 1
                 /// EnableHighEntropy : 1
                 /// DisallowStrippedImages : 1
-                /// ReservedFlags : 28
+                /// ReservedFlags : 28.
                 /// </summary>
                 private uint bitvector;
 

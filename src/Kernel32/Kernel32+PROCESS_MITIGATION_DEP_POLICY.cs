@@ -19,12 +19,12 @@ namespace PInvoke
             public DUMMYUNION DUMMYUNIONNAME;
 
             /// <summary>
-            /// DEP is permanently enabled and cannot be disabled if this field is set to TRUE
+            /// DEP is permanently enabled and cannot be disabled if this field is set to TRUE.
             /// </summary>
             private byte permanent;
 
             /// <summary>
-            /// Gets or sets a value indicating whether DEP is permanently enabled and cannot be disabled
+            /// Gets or sets a value indicating whether DEP is permanently enabled and cannot be disabled.
             /// </summary>
             public bool Permanent
             {
@@ -37,7 +37,7 @@ namespace PInvoke
                 /// <summary>
                 /// Enable : 1
                 /// DisableAtlThunkEmulation : 1
-                /// ReservedFlags : 30
+                /// ReservedFlags : 30.
                 /// </summary>
                 private uint bitvector;
 
@@ -64,7 +64,7 @@ namespace PInvoke
             public struct DUMMYUNION
             {
                 /// <summary>
-                /// This member is reserved for system use
+                /// This member is reserved for system use.
                 /// </summary>
                 [FieldOffset(0)]
                 public uint Flags;

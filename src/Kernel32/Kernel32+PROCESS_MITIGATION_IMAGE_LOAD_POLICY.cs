@@ -11,17 +11,17 @@ namespace PInvoke
     public partial class Kernel32
     {
         /// <summary>
-        /// Contains process mitigation policy settings for the loading of images from a remote device
+        /// Contains process mitigation policy settings for the loading of images from a remote device.
         /// </summary>
         public struct PROCESS_MITIGATION_IMAGE_LOAD_POLICY
         {
             /// <summary>
-            /// A union of flags and a bit-vector of policies
+            /// A union of flags and a bit-vector of policies.
             /// </summary>
             public DUMMYUNION DUMMYUNIONNAME;
 
             /// <summary>
-            /// A bit-vector of individual policies
+            /// A bit-vector of individual policies.
             /// </summary>
             public struct DUMMYSTRUCT
             {
@@ -31,7 +31,7 @@ namespace PInvoke
                 /// PreferSystem32Images : 1
                 /// AuditNoRemoteImages : 1
                 /// AuditNoLowMandatoryLabelImages : 1
-                /// ReservedFlags : 27
+                /// ReservedFlags : 27.
                 /// </summary>
                 private uint bitvector;
 
@@ -85,7 +85,7 @@ namespace PInvoke
                 }
 
                 /// <summary>
-                /// Gets or sets <see cref="AuditNoLowMandatoryLabelImages"/>
+                /// Gets or sets <see cref="AuditNoLowMandatoryLabelImages"/>.
                 /// </summary>
                 public uint AuditNoLowMandatoryLabelImages
                 {
@@ -94,7 +94,7 @@ namespace PInvoke
                 }
 
                 /// <summary>
-                /// Gets or sets <see cref="ReservedFlags"/>
+                /// Gets or sets <see cref="ReservedFlags"/>.
                 /// </summary>
                 public uint ReservedFlags
                 {
@@ -104,19 +104,19 @@ namespace PInvoke
             }
 
             /// <summary>
-            /// A union of flags and a bit-vector
+            /// A union of flags and a bit-vector.
             /// </summary>
             [StructLayout(LayoutKind.Explicit)]
             public struct DUMMYUNION
             {
                 /// <summary>
-                /// Reserved for system use
+                /// Reserved for system use.
                 /// </summary>
                 [FieldOffset(0)]
                 public uint Flags;
 
                 /// <summary>
-                /// Contains a bit-vector
+                /// Contains a bit-vector.
                 /// </summary>
                 [FieldOffset(0)]
                 public DUMMYSTRUCT DUMMYSTRUCTNAME;
