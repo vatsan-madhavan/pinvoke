@@ -95,7 +95,7 @@ namespace PInvoke
             /// <summary>
             /// Ends the enumeration
             /// </summary>
-            MaxProcessMitigationPolicy = 16
+            MaxProcessMitigationPolicy = 16,
         }
     }
 }
