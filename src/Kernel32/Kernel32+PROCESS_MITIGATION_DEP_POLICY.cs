@@ -14,6 +14,7 @@ namespace PInvoke
         /// Contains process mitigation policy settings for data execution prevention (DEP).
         /// The GetProcessMitigationPolicy and SetProcessMitigationPolicy functions use this structure.
         /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
         public struct PROCESS_MITIGATION_DEP_POLICY
         {
             public DUMMYUNION DUMMYUNIONNAME;
@@ -32,34 +33,6 @@ namespace PInvoke
                 set => this.permanent = (byte)(value ? 1 : 0);
             }
 
-            public struct DUMMYSTRUCT
-            {
-                /// <summary>
-                /// Enable : 1
-                /// DisableAtlThunkEmulation : 1
-                /// ReservedFlags : 30.
-                /// </summary>
-                private uint bitvector;
-
-                public bool Enable
-                {
-                    get => (this.bitvector & 1u) != 0;
-                    set => this.bitvector = (value ? 1u : 0u) | this.bitvector;
-                }
-
-                public bool DisableAtlThunkEmulation
-                {
-                    get => ((this.bitvector & 2u) / 2) != 0;
-                    set => this.bitvector = ((value ? 1u : 0u) * 2) | this.bitvector;
-                }
-
-                public uint ReservedFlags
-                {
-                    get => (this.bitvector & 0xFFFFFFFCu) / 4;
-                    set => this.bitvector = (value * 4) | this.bitvector;
-                }
-            }
-
             [StructLayout(LayoutKind.Explicit)]
             public struct DUMMYUNION
             {
@@ -71,6 +44,34 @@ namespace PInvoke
 
                 [FieldOffset(0)]
                 public DUMMYSTRUCT DUMMYSTRUCTNAME;
+
+                public struct DUMMYSTRUCT
+                {
+                    /// <summary>
+                    /// Enable : 1
+                    /// DisableAtlThunkEmulation : 1
+                    /// ReservedFlags : 30.
+                    /// </summary>
+                    private uint bitvector;
+
+                    public bool Enable
+                    {
+                        get => (this.bitvector & 1u) != 0;
+                        set => this.bitvector = (value ? 1u : 0u) | this.bitvector;
+                    }
+
+                    public bool DisableAtlThunkEmulation
+                    {
+                        get => ((this.bitvector & 2u) / 2) != 0;
+                        set => this.bitvector = ((value ? 1u : 0u) * 2) | this.bitvector;
+                    }
+
+                    public uint ReservedFlags
+                    {
+                        get => (this.bitvector & 0xFFFFFFFCu) / 4;
+                        set => this.bitvector = (value * 4) | this.bitvector;
+                    }
+                }
             }
         }
     }
