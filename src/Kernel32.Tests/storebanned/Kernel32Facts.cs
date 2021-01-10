@@ -1261,6 +1261,80 @@ public partial class Kernel32Facts
             CancellationToken.None).AsTask()).ConfigureAwait(false);
     }
 
+    [Fact]
+    public unsafe void ProcessMitigationPolicyTest()
+    {
+        var hProcess = Kernel32.GetCurrentProcess();
+
+        // ProcessDEPPolicy
+        PROCESS_MITIGATION_DEP_POLICY depPolicy = default;
+        var size = new UIntPtr((uint)Marshal.SizeOf<PROCESS_MITIGATION_DEP_POLICY>());
+        Assert.True(Kernel32.GetProcessMitigationPolicy(
+            hProcess,
+            PROCESS_MITIGATION_POLICY.ProcessDEPPolicy,
+            &depPolicy,
+            size));
+
+        // ProcessASLRPolicy
+        PROCESS_MITIGATION_ASLR_POLICY aslrPolicy = default;
+        size = new UIntPtr((uint)Marshal.SizeOf<PROCESS_MITIGATION_ASLR_POLICY>());
+        Assert.True(Kernel32.GetProcessMitigationPolicy(
+            hProcess,
+            PROCESS_MITIGATION_POLICY.ProcessASLRPolicy,
+            &aslrPolicy,
+            size));
+
+        aslrPolicy = new PROCESS_MITIGATION_ASLR_POLICY
+        {
+            DUMMYUNIONNAME = new PROCESS_MITIGATION_ASLR_POLICY.DUMMYUNION
+            {
+                DUMMYSTRUCTNAME = new PROCESS_MITIGATION_ASLR_POLICY.DUMMYSTRUCT
+                {
+                    DisallowStrippedImages = true,
+                    EnableBottomUpRandomization = true,
+                    EnableForceRelocateImages = true,
+                },
+            },
+        };
+        Assert.True(Kernel32.SetProcessMitigationPolicy(
+            PROCESS_MITIGATION_POLICY.ProcessASLRPolicy,
+            &aslrPolicy,
+            size));
+        Assert.True(Kernel32.GetProcessMitigationPolicy(
+            hProcess,
+            PROCESS_MITIGATION_POLICY.ProcessASLRPolicy,
+            &aslrPolicy,
+            size));
+        Assert.True(aslrPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.EnableForceRelocateImages);
+        Assert.True(aslrPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.EnableBottomUpRandomization);
+        Assert.True(aslrPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.DisallowStrippedImages);
+
+        // ProcessSideChannelIsolationPolicy
+        PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY sideChannelIsolationPolicy = default;
+        size = new UIntPtr((uint)Marshal.SizeOf<PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY>());
+
+        Assert.True(Kernel32.GetProcessMitigationPolicy(
+            Kernel32.GetCurrentProcess(),
+            PROCESS_MITIGATION_POLICY.ProcessSideChannelIsolationPolicy,
+            &sideChannelIsolationPolicy,
+            size));
+        Assert.False(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.IsolateSecurityDomain);
+        Assert.False(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SmtBranchTargetIsolation);
+        Assert.False(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SpeculativeStoreBypassDisable);
+
+        sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.IsolateSecurityDomain = true;
+        sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SmtBranchTargetIsolation = false;
+        sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SpeculativeStoreBypassDisable = true;
+
+        Assert.True(Kernel32.SetProcessMitigationPolicy(
+            PROCESS_MITIGATION_POLICY.ProcessSideChannelIsolationPolicy,
+            &sideChannelIsolationPolicy,
+            size));
+        Assert.True(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.IsolateSecurityDomain);
+        Assert.False(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SmtBranchTargetIsolation);
+        Assert.True(sideChannelIsolationPolicy.DUMMYUNIONNAME.DUMMYSTRUCTNAME.SpeculativeStoreBypassDisable);
+    }
+
     /// <summary>
     /// Helper for <see cref="CreateThread_Test"/>, <see cref="CreateRemoteThread_PseudoTest"/>  and
     /// <see cref="CreateRemoteThreadEx_PseudoTest"/> tests.
