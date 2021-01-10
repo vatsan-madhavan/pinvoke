@@ -1203,6 +1203,148 @@ namespace PInvoke
             uint ProcessInformationSize);
 
         /// <summary>
+        /// Retrieves information about the specified process.
+        /// </summary>
+        /// <param name="hProcess">
+        /// A handle to the process. This handle must have the <see cref="ProcessAccess.PROCESS_SET_INFORMATION"/> access right.
+        /// For more information, see <a href="https://docs.microsoft.com/en-us/windows/desktop/ProcThread/process-security-and-access-rights">Process Security and Access Rights</a>.
+        /// </param>
+        /// <param name="MitigationPolicy">
+        /// The mitigation policy to retrieve. This parameter can be one of the following values.
+        /// <list type="table">
+        /// <listheader>
+        /// <term>value</term> <term>meaning</term>
+        /// </listheader>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessDEPPolicy"/></term>
+        /// <term>
+        /// The data execution prevention (DEP) policy of the process.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_DEP_POLICY"/> structure that
+        /// specifies the DEP policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessASLRPolicy"/></term>
+        /// <term>
+        /// The Address Space Layout Randomization (ASLR) policy of the process.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_ASLR_POLICY"/> structure that specifies the ASLR policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessDynamicCodePolicy"/></term>
+        /// <term>
+        /// The dynamic code policy of the process. When turned on, the process cannot generate dynamic code or modify existing executable code.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_DYNAMIC_CODE_POLICY"/> structure that specifies the dynamic code policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessStrictHandleCheckPolicy"/></term>
+        /// <term>
+        /// The process will receive a fatal error if it manipulates a handle that is not valid.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY"/> structure that specifies the handle check policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessSystemCallDisablePolicy"/></term>
+        /// <term>
+        /// Disables the ability to use NTUser/GDI functions at the lowest layer.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY"/> structure that specifies the system call disable policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessMitigationOptionsMask"/></term>
+        /// <term>
+        /// Returns the mask of valid bits for all the mitigation options on the system. An application can set many mitigation options without querying the operating system for
+        /// mitigation options by combining bitwise with the mask to exclude all non-supported bits at once.
+        ///
+        /// The lpBuffer parameter points to a ULONG64 bit vector for the mask, or a two-element array of ULONG64 bit vectors.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessExtensionPointDisablePolicy"/></term>
+        /// <term>
+        /// Prevents certain built-in third party extension points from being enabled, preventing legacy extension point DLLs from being loaded into the process.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY"/> structure that specifies the extension point disable policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessSignaturePolicy"/></term>
+        /// <term>
+        /// The policy of a process that can restrict image loading to those images that are either signed by Microsoft, by the Windows Store, or by Microsoft, the Windows Store and the Windows Hardware Quality Labs (WHQL).
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY"/> structure that specifies the signature policy flags.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessFontDisablePolicy"/></term>
+        /// <term>
+        /// The policy regarding font loading for the process. When turned on, the process cannot load non-system fonts.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_FONT_DISABLE_POLICY"/> structure that specifies the policy flags for font loading.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessImageLoadPolicy"/></term>
+        /// <term>
+        /// The policy regarding image loading for the process, which determines the types of executable images that are allowed to be mapped into the process. When turned on, images cannot be
+        /// loaded from some locations, such a remote devices or files that have the low mandatory label.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_IMAGE_LOAD_POLICY"/> structure that
+        /// specifies the policy flags for image loading.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessSideChannelIsolationPolicy"/></term>
+        /// <term>
+        /// Windows 10, version 1809 and above: The policy regarding isolation of side channels for the specified process.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY"/> structure that specifies the policy flags for side channel isolation.
+        /// </term>
+        /// </item>
+        /// <item>
+        /// <term><see cref="PROCESS_MITIGATION_POLICY.ProcessUserShadowStackPolicy"/></term>
+        /// <term>
+        /// Windows 10, version 2004 and above: The policy regarding user-mode Hardware-enforced Stack Protection for the specified process.
+        /// The <paramref name="lpBuffer"/> parameter points to a <see cref="PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY"/> structure that specifies the policy flags for user-mode Hardware-enforced Stack Protection.
+        /// </term>
+        /// </item>
+        /// </list>
+        /// </param>
+        /// <param name="lpBuffer">
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessDEPPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_DEP_POLICY"/> structure that receives the DEP policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessASLRPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_ASLR_POLICY"/> structure that receives the ASLR policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessDynamicCodePolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_DYNAMIC_CODE_POLICY"/> structure that receives the dynamic code policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessStrictHandleCheckPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY"/> structure that specifies the handle check policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessSystemCallDisablePolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY"/> structure that specifies the system call disable policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessMitigationOptionsMask"/>, this parameter points to a ULONG64 bit vector for the mask or a two-element array of ULONG64 bit vectors.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessExtensionPointDisablePolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY"/> structure that specifies the extension point disable policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessControlFlowGuardPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY"/> structure that specifies the CFG policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessSignaturePolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY"/> structure that receives the signature policy flags.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessFontDisablePolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_FONT_DISABLE_POLICY"/> structure that receives the policy flags for font loading.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessImageLoadPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_IMAGE_LOAD_POLICY"/> structure that receives the policy flags for image loading.
+        ///
+        /// If <paramref name="MitigationPolicy"/> is <see cref="PROCESS_MITIGATION_POLICY.ProcessUserShadowStackPolicy"/>, this parameter points to a <see cref="PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY"/> structure that receives the policy flags for user-mode Hardware-enforced Stack Protection.
+        /// </param>
+        /// <param name="dwLength">The size of lpBuffer, in bytes.</param>
+        /// <returns>
+        /// If the function succeeds, it returns true. If the function fails, it returns false.
+        /// To retrieve error values defined for this function, call GetLastError.
+        /// </returns>
+        [DllImport(nameof(api_ms_win_core_processthreads_l1_1_1), SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static unsafe extern bool GetProcessMitigationPolicy(
+            SafeObjectHandle hProcess,
+            PROCESS_MITIGATION_POLICY MitigationPolicy,
+            void* lpBuffer,
+            [Friendly(FriendlyFlags.NativeInt)] UIntPtr dwLength);
+
+        /// <summary>
         ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW,
         ///     FindFirstFileNameTransactedW, FindFirstFileTransacted, FindFirstStreamTransactedW, or FindFirstStreamW functions.
         /// </summary>
