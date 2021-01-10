@@ -1336,7 +1336,7 @@ namespace PInvoke
         /// If the function succeeds, it returns true. If the function fails, it returns false.
         /// To retrieve error values defined for this function, call GetLastError.
         /// </returns>
-        [DllImport(nameof(api_ms_win_core_processthreads_l1_1_1), SetLastError = true)]
+        [DllImport(api_ms_win_core_processthreads_l1_1_1, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static unsafe extern bool GetProcessMitigationPolicy(
             SafeObjectHandle hProcess,
